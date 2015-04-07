@@ -124,7 +124,6 @@ def listId(keyword):
 	return searchInKeyInDict(keyword,'id',snippets)
 
 
-# subprocess.call(['vim',name + '/title'])
-# subprocess.call(['vim',name + '/content'])
+
 
 
