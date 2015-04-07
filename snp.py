@@ -16,6 +16,7 @@ Usage:
 
 from docopt import docopt
 import lib
+import sys
 
 def main():
 	arguments = docopt(__doc__, version='Snippet 0.01')
@@ -23,11 +24,8 @@ def main():
 	if (arguments['new']):
 		title   = arguments['<title>']
 		content = arguments['<content>']
-		if (title == None):	  title   = ''
-		if (content == None): content = ''
+		content = sys.stdin.read()
 		id = lib.new(title,content)
-		if (title == ''):   lib.vim(id + '/title')
-		if (content == ''): lib.vim(id + '/content')
 
 	elif (arguments['all']):
 		if (arguments['<keyword>'] == None):

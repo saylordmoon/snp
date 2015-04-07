@@ -12,7 +12,8 @@ def run(cmd):
 	try:
 		result = subprocess.check_output(cmd,stderr=subprocess.STDOUT,shell=True)    
 	except subprocess.CalledProcessError as e:
-		result = str(e.output)
+		#str("error: " + e.output)
+		return False
 	return result 
 
 def directoryExists(name):
@@ -50,10 +51,15 @@ def generateDirectoryStructure(title='',content=''):
 	createFileWithText ( id + "/content"	, content )
 	createFile ( id + "/tag"   )
 	createFile ( id + "/order" )
+	createFile ( id + "/subject" )
 	return id
 
 def new(title='',content=''):
+	if (title == None): title = ''
+	if (content == None): content = ''
 	id = generateDirectoryStructure(title,content)
+	if (title == ''):	vim(id + '/title')
+	if (content == ''):	vim(id + '/content')
 	return id
 
 def vim(file):
@@ -66,21 +72,32 @@ def getTitle(id):
 def getContent(id):
 	return run("cat " + id + "content")
 
+def getSubject(id):
+	return run("cat " + id + "subject")
+
+def getOrder(id):
+	return run("cat " + id + "order")
+
 def listAll():
-	ids = run("ls -d */").strip().split('\n')
+	ids = run("ls -d */")
 	snippets = []
-	for id in ids:
-		snippets.append({ 	'id'		: id , 
-							'title'		: getTitle(id), 
-							'content'	: getContent(id) })
+	if (ids):
+		ids = ids.strip().split('\n')
+		for id in ids:
+			snippets.append({ 	'id'		: id , 
+								'title'		: getTitle(id), 
+								'content'	: getContent(id),
+								'subject'	: getSubject(id),
+								'order' 	: getOrder(id) })
 	return snippets
 
 def searchInDict(keyword, snippets):
 	search = [];
 	for snippet in snippets:
 		for value in snippet.values():
-			if (keyword.lower() in value.lower()):
-				search.append(snippet)
+			if (value):
+				if (keyword.lower() in value.lower()):
+					search.append(snippet)
 	return search
 
 def listAllKeyword(keyword):
